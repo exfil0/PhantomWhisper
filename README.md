@@ -67,7 +67,7 @@ The `Settings` model (see `config.py`) automatically ingests these at runtime.
 
 ---
 
-## 4  Payload & Target Prep
+## 4  Payload & Target Prep
 
 1. **Payload** – place your malicious WebP at **`payloads/malicious_webp.bin`**.
 2. **Targets** – supply IDs via `TARGET_WHATSAPP_IDS` **or** edit the default list in `config.py`.
