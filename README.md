@@ -1,142 +1,170 @@
-# Phantom Whisper — Step‑by‑Step Usage Guide
+# Phantom Whisper — Step‑by‑Step Usage Guide
 
 *A zero‑to‑green‑check walkthrough*
 
----
-
-## 1  Prerequisites
-
-| Requirement                 | Why                                  | Quick Check                |
-| --------------------------- | ------------------------------------ | -------------------------- |
-| Python 3.9 +                | Typing + `pydantic_settings` support | `python --version`         |
-| `virtualenv` or `pyenv`     | Isolate deps                         | *Optional but recommended* |
-| Git + GCC/Clang             | Pull & build wheels                  | `git --version`            |
-| Out‑of‑scope test device(s) | Ethical testing only                 | Device IMEIs / IDs         |
+> \*\*Ethics First 🚨  \*\*Deploy **only** against devices you own **or** have **written consent** to test. You are fully responsible for legality & ethics.
 
 ---
 
-## 2  Clone & Install
+## ✨ What is Phantom Whisper?
+
+A Python 3 framework that
+
+1. **Delivers** a prepared WebP zero‑click payload to WhatsApp targets.
+2. **Polls** your C2 for an ASLR leak proving initial compromise.
+3. **Triggers** download/execute of a full implant (iOS or Android).
+4. **Logs** every step to JSON‑lines for audit‑grade traceability.
+
+The code is single‑host & sequential today, but architected for multi‑threaded scale tomorrow.
+
+---
+
+\## 1  Prerequisites
+
+| Requirement                 | Why                                                                | Quick Check                      |
+| --------------------------- | ------------------------------------------------------------------ | -------------------------------- |
+| **Python 3.9+**             | Modern typing, `pydantic‑settings`, f‑strings                      | `python3 --version`              |
+| `virtualenv` / `pyenv`      | Isolate project dependencies                                       | *(strongly recommended)*         |
+| **Git + GCC/Clang**         | Clone repo & compile any C‑backed wheels                           | `git --version`, `gcc --version` |
+| Out‑of‑scope test device(s) | **Only for ethical testing**—never target without explicit consent | Verify IMEI / device ID          |
+
+> 💡 *A C compiler is usually **optional**—all current wheels are pre‑built.*
+
+---
+
+\## 2  Clone & Install
 
 ```bash
-# 2.1  Clone
-$ git clone https://github.com/exfil0/phantom_whisper.git
-$ cd phantom_whisper
+# 2.1 Clone the repository
+$ git clone https://github.com/<you>/phantom_whisper.git
+$ cd phantom_whisper
 
-# 2.2  Create and activate venv
-$ python -m venv .venv
-$ source .venv/bin/activate
+# 2.2 Create & activate a virtual environment
+$ python3 -m venv .venv
+$ source .venv/bin/activate       # Windows: .venv\Scripts\activate
 
-# 2.3  Install deps
-$ pip install -r requirements.txt
+# 2.3 Install runtime dependencies
+$ pip install -r requirements.txt
 ```
 
 ---
 
-## 3  Configure Environment
+\## 3  Configure Environment
 
-Create a file named `.env` **in the project root**:
+Create a file named **`.env`** *in the project root*:
 
-```env
-# .env
-C2_API_KEY=REPLACE_WITH_REAL_KEY
+```dotenv
+# Required
+C2_API_KEY=REPLACE_ME
+
+# Optional overrides
+C2_SERVER_BASE_URL=https://c2.example.com
+TARGET_WHATSAPP_IDS="+15551234567,+447911123456"
+OS_TYPE=android                # ios (default) | android
 ```
 
-| Variable                        | Description                              |
-| ------------------------------- | ---------------------------------------- |
-| `C2_API_KEY`                    | Auth token for your C2 service           |
-| (Optional) `C2_SERVER_BASE_URL` | Defaults to `https://your-c2-server.com` |
+The `Settings` model (see `config.py`) automatically ingests these at runtime.
 
 ---
 
-## 4  Prepare Payload & Target List
+\## 4  Payload & Target Prep
 
-1. Drop your **malicious WebP** into `./payloads/malicious_webp.bin`
-      *Keep filename—code resolves by path.*
-2. Edit `phantom_whisper/config.py` *or* append to `.env`:
-
-   ```env
-   # Comma‑separated WhatsApp IDs
-   TARGET_WHATSAPP_IDS="+15551234567,+15557654321"
-   ```
+1. **Payload** – place your malicious WebP at **`payloads/malicious_webp.bin`**.
+2. **Targets** – supply IDs via `TARGET_WHATSAPP_IDS` **or** edit the default list in `config.py`.
 
 ---
 
-## 5  Dry‑Run Smoke Test
+\## 5  Smoke Test (Dry‑Run)
 
 ```bash
-$ python -m phantom_whisper.orchestrator --help   # coming soon
-$ python -m phantom_whisper.orchestrator          # runs with defaults
+$ python -m phantom_whisper.orchestrator
 ```
 
-What to expect:
+*Expect:*
 
-* Console log lines in plain text.
-* `./logs/phantom_whisper.log` populated with JSON entries.
-
-*No network calls will be fired until payload & targets are reachable.*
+* Console output in plain text.
+* `logs/phantom_whisper.log` containing structured JSON lines.
+* **Zero** outbound C2 traffic unless your `.env` is fully populated.
 
 ---
 
-## 6  Live Execution
+\## 6  Live Execution ⚠️
+
+> **Ensure you have legal authority & written permission before proceeding.**
 
 ```bash
-# Ensure VPN / lab network is ready
-$ python -m phantom_whisper.orchestrator
+# Verify C2 reachability, VPN/lab network, etc.
+$ python -m phantom_whisper.orchestrator
 ```
 
-The orchestrator will:
+\### Execution Flow (per target)
 
-1. **Send Zero‑click WebP** → target device(s)
-2. Poll C2 for **ASLR leak** (exponential back‑off)
-3. Instruct C2 to **deploy implant** `main_implant_<os>.bin`
+1. **Init clients** `C2Client` + `WhatsAppTransport` (per‑target context).
+2. **Send payload** Zero‑click WebP delivery.
+3. **Poll for leak** Exponential back‑off until ASLR address received.
+4. **Deploy implant** Command C2 to push the full binary.
 
-Exit code = number of failed targets (0 → 🎉).
-
----
-
-## 7  Log & Evidence Collection
-
-* **Human‑readable:** console output.
-* **Structured:** `logs/phantom_whisper.log` (JSON per line).
-* **Hash traceability:** each session includes `payload_hash` + `session_id`.
-
-> Tip: import the JSON log into a SIEM/Grafana for timeline views.
+| Exit Code | Meaning                           |
+| --------- | --------------------------------- |
+|  `0`      | All targets succeeded             |
+|  `N > 0`  |  `N` targets failed orchestration |
 
 ---
 
-## 8  Parallel Mode (Optional)
+\## 7  Logging & Telemetry
 
-Uncomment the `ThreadPoolExecutor` block in `orchestrator.py` and set:
+| Channel | Location                     | Format        |
+| ------- | ---------------------------- | ------------- |
+| Console | STDOUT                       | Plain text    |
+| File    | `./logs/phantom_whisper.log` | JSON‑per‑line |
 
-```python
-settings.max_workers = 4  # or env var in future release
-```
+Each entry contains: `timestamp`, `session_id`, `payload_hash`, `target_id`, log level, and message.
+
+> **Tip:** Ship the log file to ELK, Splunk, or simply `jq` for ad‑hoc forensics.
 
 ---
 
-## 9  Cleanup
+\## 8  Parallel Mode (Optional)
+
+Uncomment the `ThreadPoolExecutor` block in `orchestrator.py` and set `MAX_WORKERS` in your `.env`.
+
+---
+
+\## 9  Cleanup
 
 ```bash
-$ deactivate             # leave virtualenv
-$ rm -rf .venv logs/*.log
+$ deactivate                        # leave venv
+$ rm -rf .venv logs/*.log           # nuke env & logs
 ```
 
 ---
 
-## 10  Troubleshooting
+\## 10  Troubleshooting
 
-| Symptom                               | Likely Cause          | Fix                                     |
-| ------------------------------------- | --------------------- | --------------------------------------- |
-| `requests.exceptions.ConnectionError` | Bad C2 URL / VPN down | Verify `C2_SERVER_BASE_URL`             |
-| `PayloadError: not found`             | Wrong payload path    | Confirm `./payloads/malicious_webp.bin` |
-| Exit code > 0                         | Some targets failed   | See `logs/` for `ERROR` lines           |
+| Symptom                        | Likely Cause                               | Remedy                                                       |
+| ------------------------------ | ------------------------------------------ | ------------------------------------------------------------ |
+| `ConnectionError`              | Bad C2 URL / network issues                | Verify `C2_SERVER_BASE_URL`, VPN, firewall                   |
+| `PayloadError`                 | Missing WebP file                          | Check `payloads/malicious_webp.bin` path                     |
+| `C2ResponseSchemaError`        | C2 JSON doesn’t match expected schema      | Update C2 server or adjust client                            |
+| Exit code > 0                  | Target orchestration failures              | Inspect `phantom_whisper.log` `ERROR` entries                |
+| `AttributeError` / `NameError` | Missing dependency or wrong Python version | Re‑run `pip install -r requirements.txt`; ensure Python 3.9+ |
 
 ---
 
-### 💡 Next Steps
+\### 💡 Next Steps
 
-* Swap simulated WhatsApp transport for real exploit transport.
-* Add CLI arg parsing for fully headless use.
-* Package with `pyinstaller` for single‑file drop && go.
+* **Real WhatsApp transport** – replace simulator.
+* **CLI flags** – for headless operation & overrides.
+* **PyInstaller bundle** – single‑file distribution.
+* **gRPC‑based C2** – flexible backend protocol.
 
-— **Happy hunting & stay ethical!**
+PRs welcome 🙂
+
+---
+
+\## License
+Internal proof‑of‑concept — no public license. Contact the author for usage terms.
+
+---
+
+**Happy hunting & stay ethical!**
