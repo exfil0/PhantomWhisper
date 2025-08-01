@@ -1,0 +1,9 @@
+# Core runtime
+pydantic==2.6.4          # Base data-validation library (v2 for field_validator)
+pydantic-settings==2.1.1 # .env & settings management (pairs with Pydantic v2)
+requests==2.31.0         # HTTP client for C2 interactions
+urllib3==2.2.1           # Used underneath requests; pin for security
+
+# Optional / nice-to-have
+python-dotenv==1.0.1     # Ensures .env file loading if present
+typing_extensions>=4.10  # Back-port typing features (safeguard for older Pythons)
