@@ -20,7 +20,7 @@
 ```bash
 # 2.1  Clone
 $ git clone https://github.com/exfil0/phantom_whisper.git
-$ cd phantom‑whisper
+$ cd phantom_whisper
 
 # 2.2  Create and activate venv
 $ python -m venv .venv
