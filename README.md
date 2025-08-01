@@ -36,7 +36,7 @@ The code is single‑host & sequential today, but architected for multi‑thread
 
 ```bash
 # 2.1 Clone the repository
-$ git clone https://github.com/<you>/phantom_whisper.git
+$ git clone https://github.com/exfil0/phantom_whisper.git
 $ cd phantom_whisper
 
 # 2.2 Create & activate a virtual environment
