@@ -2,7 +2,7 @@
 
 *A zero‑to‑green‑check walkthrough*
 
-> \*\*Ethics First 🚨  \*\*Deploy **only** against devices you own **or** have **written consent** to test. You are fully responsible for legality & ethics.
+> \*\*Ethics First 🚨  \*\* Deploy **only** against devices you own **or** have **written consent** to test. You are fully responsible for legality & ethics.
 
 ---
 
