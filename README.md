@@ -43,7 +43,7 @@ $ cd phantom_whisper
 $ python3 -m venv .venv
 $ source .venv/bin/activate       # Windows: .venv\Scripts\activate
 
-# 2.3 Install runtime dependencies
+# 2.3 Install runtime dependencies
 $ pip install -r requirements.txt
 ```
 
@@ -124,7 +124,7 @@ Each entry contains: `timestamp`, `session_id`, `payload_hash`, `target_id`, 
 
 ---
 
-## 8  Parallel Mode (Optional)
+## 8  Parallel Mode (Optional)
 
 Uncomment the `ThreadPoolExecutor` block in `orchestrator.py` and set `MAX_WORKERS` in your `.env`.
 
@@ -162,7 +162,7 @@ PRs welcome
 
 ---
 
-## License
+## License
 Internal proof‑of‑concept — no public license. Contact the author for usage terms.
 
 ---
