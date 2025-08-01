@@ -19,7 +19,7 @@
 
 ```bash
 # 2.1  Clone
-$ git clone https://github.com/yourname/phantom‑whisper.git
+$ git clone https://github.com/exfil0/PhantomWhisper.git
 $ cd phantom‑whisper
 
 # 2.2  Create and activate venv
