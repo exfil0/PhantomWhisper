@@ -6,7 +6,7 @@
 
 ---
 
-## ✨ What is Phantom Whisper?
+## What is Phantom Whisper?
 
 A Python 3 framework that
 
@@ -19,7 +19,7 @@ The code is single‑host & sequential today, but architected for multi‑thread
 
 ---
 
-\## 1  Prerequisites
+## 1  Prerequisites
 
 | Requirement                 | Why                                                                | Quick Check                      |
 | --------------------------- | ------------------------------------------------------------------ | -------------------------------- |
@@ -32,7 +32,7 @@ The code is single‑host & sequential today, but architected for multi‑thread
 
 ---
 
-\## 2  Clone & Install
+## 2  Clone & Install
 
 ```bash
 # 2.1 Clone the repository
@@ -49,7 +49,7 @@ $ pip install -r requirements.txt
 
 ---
 
-\## 3  Configure Environment
+## 3  Configure Environment
 
 Create a file named **`.env`** *in the project root*:
 
@@ -67,14 +67,14 @@ The `Settings` model (see `config.py`) automatically ingests these at runtime.
 
 ---
 
-\## 4  Payload & Target Prep
+## 4  Payload & Target Prep
 
 1. **Payload** – place your malicious WebP at **`payloads/malicious_webp.bin`**.
 2. **Targets** – supply IDs via `TARGET_WHATSAPP_IDS` **or** edit the default list in `config.py`.
 
 ---
 
-\## 5  Smoke Test (Dry‑Run)
+## 5  Smoke Test (Dry‑Run)
 
 ```bash
 $ python -m phantom_whisper.orchestrator
@@ -88,7 +88,7 @@ $ python -m phantom_whisper.orchestrator
 
 ---
 
-\## 6  Live Execution ⚠️
+## 6 Live Execution ⚠️
 
 > **Ensure you have legal authority & written permission before proceeding.**
 
@@ -97,7 +97,7 @@ $ python -m phantom_whisper.orchestrator
 $ python -m phantom_whisper.orchestrator
 ```
 
-\### Execution Flow (per target)
+### Execution Flow (per target)
 
 1. **Init clients** `C2Client` + `WhatsAppTransport` (per‑target context).
 2. **Send payload** Zero‑click WebP delivery.
@@ -111,7 +111,7 @@ $ python -m phantom_whisper.orchestrator
 
 ---
 
-\## 7  Logging & Telemetry
+## 7 Logging & Telemetry
 
 | Channel | Location                     | Format        |
 | ------- | ---------------------------- | ------------- |
@@ -124,13 +124,13 @@ Each entry contains: `timestamp`, `session_id`, `payload_hash`, `target_id`, 
 
 ---
 
-\## 8  Parallel Mode (Optional)
+## 8  Parallel Mode (Optional)
 
 Uncomment the `ThreadPoolExecutor` block in `orchestrator.py` and set `MAX_WORKERS` in your `.env`.
 
 ---
 
-\## 9  Cleanup
+## 9  Cleanup
 
 ```bash
 $ deactivate                        # leave venv
@@ -139,7 +139,7 @@ $ rm -rf .venv logs/*.log           # nuke env & logs
 
 ---
 
-\## 10  Troubleshooting
+## 10  Troubleshooting
 
 | Symptom                        | Likely Cause                               | Remedy                                                       |
 | ------------------------------ | ------------------------------------------ | ------------------------------------------------------------ |
@@ -151,18 +151,18 @@ $ rm -rf .venv logs/*.log           # nuke env & logs
 
 ---
 
-\### 💡 Next Steps
+### Next Steps
 
 * **Real WhatsApp transport** – replace simulator.
 * **CLI flags** – for headless operation & overrides.
 * **PyInstaller bundle** – single‑file distribution.
 * **gRPC‑based C2** – flexible backend protocol.
 
-PRs welcome 🙂
+PRs welcome
 
 ---
 
-\## License
+## License
 Internal proof‑of‑concept — no public license. Contact the author for usage terms.
 
 ---
